@@ -1,103 +1,119 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[1]:
-
 # This program asks the user for their first and last name,
 # formats the name properly, displays a greeting,
 # and calculates total points for discussions, course projects, and core assessments.
+# It also checks if the student got maximum points for all assignments.
+
+# USER INPUT SECTION
 
 # Ask the user to enter their first name
 first_name = input("Enter your first name: ")
 
-# Ask the user to enter their last name
-last_name = input("Enter your last name: ") 
+# Ask the user to enter your last name
+last_name = input("Enter your last name: ")
 
 # Remove spaces before and after the names
-first_name = first_name.strip()  
-last_name = last_name.strip()    
+first_name = first_name.strip()
+last_name = last_name.strip()
 
-# Convert names to proper format (capitalize first letter only)
-first_name = first_name.capitalize() 
-last_name = last_name.capitalize()    
+# Convert names to proper format
+first_name = first_name.capitalize()
+last_name = last_name.capitalize()
 
-# Print greeting in required format
+# Print greeting
 print("Hello " + last_name + ", " + first_name)
 
-#  UNIT 1 POINTS.
+# CLASS DEFINITIONS
 
-# Store points for Unit 1 discussion
-Unit1_discussion_points = 43 
+class Discussions:
+    maximum_points_per_task = 50
+    tasks_per_semester = 8
+    display_name = "discussion"
 
-# Store points for Unit 1 course project
+class Course_projects:
+    maximum_points_per_task = 50
+    tasks_per_semester = 8
+    display_name = "course project"
+
+class Core_assesments:
+    maximum_points_per_task = 50
+    tasks_per_semester = 4
+    display_name = "core assessment"
+
+# UNIT POINTS
+
+
+# Unit 1
+Unit1_discussion_points = 43
 Unit1_course_project_points = 50
+Unit1_core_assesment_points = 49
 
-# Store points for Unit 1 core assessment
-Unit1_core_assesment_points = 49  
-
-# UNIT 2 POINTS
-
-# Store expected or actual points for Unit 2 discussion
-Unit2_discussion_points = 45 
-
-# Store expected or actual points for Unit 2 course project
+# Unit 2 (NO core assessment here)
+Unit2_discussion_points = 45
 Unit2_course_project_points = 48
 
-# Store expected or actual points for Unit 2 core assessment
-Unit2_core_assesment_points = 47 
+# Unit 3
+Unit3_discussion_points = 50
+Unit3_course_project_points = 49
+Unit3_core_assesment_points = 48
 
-# MAXIMUM POINTS 
+# LISTS
 
-# Store maximum points for each task
-task_maximum_points = 50  # Maximum possible points per assignment
+total_discussion_points = [
+    Unit1_discussion_points,
+    Unit2_discussion_points,
+    Unit3_discussion_points
+]
 
-#  CREATE LISTS
+total_course_project_points = [
+    Unit1_course_project_points,
+    Unit2_course_project_points,
+    Unit3_course_project_points
+]
 
-# Create a list for discussion points including Unit 1 and Unit 2
-total_discussion_points = [Unit1_discussion_points, Unit2_discussion_points]
+# Only include units that actually have core assessments
+total_core_assessment_points = [
+    Unit1_core_assesment_points,
+    Unit3_core_assesment_points
+]
 
-# Create a list for course project points including Unit 1 and Unit 2
-total_course_project_points = [Unit1_course_project_points, Unit2_course_project_points]
+# TOTALS
 
-# Create a list for core assessment points including Unit 1 and Unit 2
-total_core_assessment_points = [Unit1_core_assesment_points, Unit2_core_assesment_points]
-
-# CALCULATE TOTALS
-
-# Calculate total discussion points using sum() function
 discussion_total = sum(total_discussion_points)
-
-# Calculate total course project points using sum() function
 course_project_total = sum(total_course_project_points)
-
-# Calculate total core assessment points using sum() function
 core_assessment_total = sum(total_core_assessment_points)
 
-# CALCULATE MAXIMUM POSSIBLE POINTS
+# MAX POSSIBLE
 
-# Calculate maximum possible discussion points (8 assignments * max points)
-max_discussion_points = 8 * task_maximum_points
+max_discussion_points = Discussions.tasks_per_semester * Discussions.maximum_points_per_task
+max_course_project_points = Course_projects.tasks_per_semester * Course_projects.maximum_points_per_task
+max_core_assessment_points = Core_assesments.tasks_per_semester * Core_assesments.maximum_points_per_task
 
-# Calculate maximum possible course project points (8 assignments * max points)
-max_course_project_points = 8 * task_maximum_points
+# FUNCTION
 
-# Calculate maximum possible core assessment points (4 assignments * max points)
-max_core_assessment_points = 4 * task_maximum_points
+def check_max_points(grades_list, max_points, display_name):
+    all_max = True
 
-# DISPLAY RESULTS
+    for grade in grades_list:
+        if grade < max_points:
+            all_max = False
 
-# Display discussion results using format()
+    if all_max:
+        print("Congrats! You got maximum points for ALL " + display_name + " homeworks so far!")
+    else:
+        print("Unfortunately you did not get maximum points for ALL " + display_name + " homeworks")
+        
+# OUTPUT
+
 print("Currently you have {} points for discussions out of {}".format(discussion_total, max_discussion_points))
-
-# Display course project results using format()
 print("Currently you have {} points for course projects out of {}".format(course_project_total, max_course_project_points))
-
-# Display core assessment results using format()
 print("Currently you have {} points for core assessments out of {}".format(core_assessment_total, max_core_assessment_points))
 
 
-# In[ ]:
+# CHECK RESULTS
 
-
-
-
+check_max_points(total_discussion_points, Discussions.maximum_points_per_task, Discussions.display_name)
+check_max_points(total_course_project_points, Course_projects.maximum_points_per_task, Course_projects.display_name)
+check_max_points(total_core_assessment_points, Core_assesments.maximum_points_per_task, Core_assesments.display_name)
