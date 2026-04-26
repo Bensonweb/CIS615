@@ -1,13 +1,7 @@
-#!/usr/bin/env python
-# coding: utf-8
 
-# Import json module so we can read data from tasks.json file
 import json
-
-
-# =========================
-# NEW CLASS: Task_type
-# =========================
+import requests
+from datetime import datetime
 
 # Create a class that represents each task type
 class Task_type:
@@ -20,9 +14,7 @@ class Task_type:
         self.maximum_points_per_task = maximum_points_per_task  # max points per task
 
 
-# =========================
 # READ JSON FILE
-# =========================
 
 # Open the tasks.json file in read mode
 with open("tasks.json", "r") as file:
@@ -31,9 +23,7 @@ with open("tasks.json", "r") as file:
     data = json.load(file)
 
 
-# =========================
 # STORE TASK TYPES IN LIST
-# =========================
 
 # Create an empty list to store Task_type objects
 task_types_list = []
@@ -53,9 +43,8 @@ for task in data:
     task_types_list.append(task_obj)
 
 
-# =========================
 # CALCULATE MAXIMUM POINTS
-# =========================
+
 
 # Initialize total maximum points variable
 total_max_points = 0
@@ -69,10 +58,48 @@ for task in task_types_list:
     # Add to overall total
     total_max_points += task_total
 
-
-# =========================
 # DISPLAY RESULT
-# =========================
+
 
 # Print the final maximum grade
 print("Maximum grade you can get for this class is:", total_max_points)
+#Get API calls from time.now API
+response = requests.get("https://time.now/developer/api/ip")
+
+#convert the API response from JSON into Python dictionary
+rhiannon = response.json()
+
+#get elements from data
+
+client_ip = rhiannon["client_ip"]
+day_of_year = rhiannon["day_of_year"]
+utc_datetime = rhiannon["utc_datetime"]
+unixtime = rhiannon["unixtime"]
+
+#display data from response to test
+print(client_ip)
+print(day_of_year)
+print(utc_datetime)
+print(unixtime)
+
+#Store the date CIS615 began into a variable and convert to the day number within the year
+begin_course_day = datetime(2026, 4, 2).timetuple().tm_yday
+
+#Convert Unix time from the API response into a Python datetime object
+now_date = datetime.fromtimestamp(unixtime)
+
+#Convert the current datetime into the current day number within the year
+now_day = now_date.timetuple().tm_yday
+
+#Determine number of days between course start date and today's date
+days_elapsed = now_day - begin_course_day
+
+#Determine how many full 7-day weeks (units) have elapsed since course start date
+completed_units = days_elapsed // 7
+
+#TEST display data from calcs
+print(begin_course_day)
+print(now_date)
+print(now_day)
+#Display the number of completed units since the beiginning the begining of python CS615  course
+print(f"You have completed {completed_units} Units of 8.") 
