@@ -1,0 +1,38 @@
+{
+ "cells": [
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "9afb3b0b-d4f4-45d6-9321-525111d6cbb2",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "type,week1,week2,week3,week4,week5,week6,week7,week8\n",
+    "discussion,43,50,-15,45,45,48,50,50\n",
+    "course_project,100,44,50,50,40,48,45,45\n",
+    "core_assessment,49,,48,,40,,47,45"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python [conda env:base] *",
+   "language": "python",
+   "name": "conda-base-py"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.13.9"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}
