@@ -1,105 +1,65 @@
-
-import json
-import requests
-from datetime import datetime
-
-# Create a class that represents each task type
-class Task_type:
-    
-    # Constructor that initializes object properties
-    def __init__(self, name, display_name, tasks_per_semester, maximum_points_per_task):
-        self.name = name  # internal name of task type
-        self.display_name = display_name  # user-friendly name
-        self.tasks_per_semester = tasks_per_semester  # number of tasks
-        self.maximum_points_per_task = maximum_points_per_task  # max points per task
+import pandas as pd  # import pandas to handle CSV
+import json  # import json to read JSON file
+from pathlib import Path  # handle file paths
 
 
-# READ JSON FILE
-
-# Open the tasks.json file in read mode
-with open("tasks.json", "r") as file:
-    
-    # Load JSON data into Python structure (list/dictionary)
-    data = json.load(file)
-
-
-# STORE TASK TYPES IN LIST
-
-# Create an empty list to store Task_type objects
-task_types_list = []
-
-# Loop through each task type in JSON file
-for task in data:
-    
-    # Create a new Task_type object using JSON values
-    task_obj = Task_type(
-        task["name"],  # name from JSON
-        task["display_name"],  # display name
-        task["tasks_per_semester"],  # number of tasks
-        task["maximum_points_per_task"]  # max points
-    )
-    
-    # Add the created object to the list
-    task_types_list.append(task_obj)
+# function to display data
+def display(title, data):
+    print("\n" + "=" * 50)  # separator
+    print(title)  # title
+    print("=" * 50)
+    print(data.to_string(index=False))  # print table
 
 
-# CALCULATE MAXIMUM POINTS
+# function to load max grades from JSON
+def load_max_points(file):
+    with open(file, "r") as f:  # open JSON file
+        data = json.load(f)  # read JSON
+
+    max_points = {}
+
+    for item in data:  # loop through JSON list
+        name = item["name"].lower()  # get type
+        max_points[name] = item["maximum_points_per_task"]  # store max grade
+
+    return max_points
 
 
-# Initialize total maximum points variable
-total_max_points = 0
+def main():
+    folder = Path.cwd()  # current folder
 
-# Loop through each task type object in the list
-for task in task_types_list:
-    
-    # Calculate total points for this task type
-    task_total = task.tasks_per_semester * task.maximum_points_per_task
-    
-    # Add to overall total
-    total_max_points += task_total
+    grades_file = folder / "grades.csv"  # CSV path
+    json_file = folder / "tasks.json"  # JSON path
 
-# DISPLAY RESULT
+    max_points = load_max_points(json_file)  # load max grades from JSON
+
+    df = pd.read_csv(grades_file)  # read CSV
+
+    display("ALL GRADES", df)  # show all data
+
+    # discussion grades
+    discussions = df[df["type"].str.lower() == "discussion"]
+    display("DISCUSSION GRADES", discussions)
+
+    # unit 1 grades (week1)
+    display("UNIT 1 GRADES", df[["type", "week1"]])
+
+    # clean data
+    for i in df.index:
+        task_type = df.loc[i, "type"].lower()  # type
+        max_grade = max_points.get(task_type, 50)  # get max from JSON
+
+        for col in df.columns[1:]:
+            grade = df.loc[i, col]
+
+            if grade < 0:
+                df.loc[i, col] = 0  # fix negative
+
+            elif grade > max_grade:
+                df.loc[i, col] = max_grade  # cap to max
+
+    display("CLEANED DATA", df)  # show cleaned
 
 
-# Print the final maximum grade
-print("Maximum grade you can get for this class is:", total_max_points)
-#Get API calls from time.now API
-response = requests.get("https://time.now/developer/api/ip")
-
-#convert the API response from JSON into Python dictionary
-rhiannon = response.json()
-
-#get elements from data
-
-client_ip = rhiannon["client_ip"]
-day_of_year = rhiannon["day_of_year"]
-utc_datetime = rhiannon["utc_datetime"]
-unixtime = rhiannon["unixtime"]
-
-#display data from response to test
-print(client_ip)
-print(day_of_year)
-print(utc_datetime)
-print(unixtime)
-
-#Store the date CIS615 began into a variable and convert to the day number within the year
-begin_course_day = datetime(2026, 4, 2).timetuple().tm_yday
-
-#Convert Unix time from the API response into a Python datetime object
-now_date = datetime.fromtimestamp(unixtime)
-
-#Convert the current datetime into the current day number within the year
-now_day = now_date.timetuple().tm_yday
-
-#Determine number of days between course start date and today's date
-days_elapsed = now_day - begin_course_day
-
-#Determine how many full 7-day weeks (units) have elapsed since course start date
-completed_units = days_elapsed // 7
-
-#TEST display data from calcs
-print(begin_course_day)
-print(now_date)
-print(now_day)
-#Display the number of completed units since the beiginning the begining of python CS615  course
-print(f"You have completed {completed_units} Units of 8.") 
+if __name__ == "__main__":
+    main()
